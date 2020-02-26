@@ -1,3 +1,0 @@
-[ironic_python_agent.hardware_managers]
-chameleon = chameleon_hardware_manager:ChameleonHardwareManager
-

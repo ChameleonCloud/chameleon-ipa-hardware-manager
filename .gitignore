@@ -1,2 +1,6 @@
 # Test dependencies
 .tox/
+# Build artifacts
+*.egg-info
+*.pyc
+__pycache__
