@@ -32,36 +32,30 @@ class ChameleonHardwareManager(hardware.HardwareManager):
 		:param ports: Port objects as provided by Ironic.
 		:returns: A list of cleaning steps, as a list of dicts.
 		"""
-		return [{'step': 'get_node_info',
-		    	 'priority': 90,
-				 'interface': 'deploy',
-			     'reboot_requested': False,
-				 'abortable': True
+		return [{
+					'step': 'get_node_info',
+					'priority': 90,
+					'interface': 'deploy',
+					'reboot_requested': False,
+					'abortable': True
                 },
                 {
-                    'step': 'erase_partitions',
-                    # NOTE: Disabled for now, needs to be tested.
-                    'priority': 0,
+                    'step': 'wait_debug',
+                    'priority': 90,
                     'interface': 'deploy',
-                    'abortable': False
+                    'abortable': True
                 }]
 
-    def erase_partitions(self, node, ports):
-        """Erase Partitions since our disks are not compatible with Secure ATA 
-        erase and other methods are slow"""
-        super(CernHardwareManager, self).erase_partitions(node, ports)
-        subprocess.Popen(["dd", "if=/dev/zero", "of=/dev/sda", "bs=512", "count=1"])
 
-    def wait_a_minute(self, node, ports):
-    """Holds the IPA for a minute after automatic cleaning to inspect logs.
-    :param node: A dictionary of the node object
-    :param ports: A list of dictionaries containing information of ports
-                  for the node
-    """
-    LOG.warning("Waiting 60 seconds for log inspection ....")
-    time.sleep(60)
+    def wait_debug(self, node, ports):
+		"""Holds the IPA for 30 minutes to inspect the state of the ramdisk.
+		:param node: A dictionary of the node object
+		:param ports: A list of dictionaries containing information of ports
+					for the node
+		"""
+		LOG.warning("Waiting 30 minutes for interactive debugging ....")
+		time.sleep(60 * 30)
 
-	# def get_node_info(self)
 
 	def get_node_info(self):
 		"""Return full hardware inventory as a dict.
